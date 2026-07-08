@@ -1,0 +1,13 @@
+copy the .env.example to .env in server folder
+
+add the mongodb url to .env file
+
+in server folder run -> npm install
+
+in client folder run -> npm install
+
+in server folder run -> node seed.js
+
+in server folder run -> npm start
+
+in client folder run -> npm run dev
