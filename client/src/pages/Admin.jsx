@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { busApi, authApi } from '../services/api';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Save, Plus, Trash2, Edit2, X, Clock, MapPin, Coffee, AlertTriangle, CheckCircle, Lock, User, Key, LogOut } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -77,7 +77,7 @@ const Admin = () => {
 
   const fetchBuses = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/buses');
+      const res = await busApi.getAll();
       setBuses(res.data);
     } catch (err) {
       console.error(err);
@@ -150,7 +150,7 @@ const Admin = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/login', loginForm);
+      const res = await authApi.login(loginForm);
       if (res.data.success) {
         setIsAuthenticated(true);
         setAdminUser(loginForm.username);
@@ -172,7 +172,7 @@ const Admin = () => {
     }
     
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/update-password', {
+      const res = await authApi.updatePassword({
         username: adminUser,
         currentPassword: passwordForm.current,
         newPassword: passwordForm.new
@@ -204,7 +204,7 @@ const Admin = () => {
       type: 'danger',
       onConfirm: async () => {
         try {
-          await axios.delete(`http://localhost:5000/api/buses/${id}`);
+          await busApi.delete(id);
           fetchBuses();
           setConfirmModal(prev => ({ ...prev, show: false }));
         } catch (err) {
@@ -230,10 +230,10 @@ const Admin = () => {
       };
 
       if (editingId) {
-        await axios.patch(`http://localhost:5000/api/buses/${editingId}`, payload);
+        await busApi.update(editingId, payload);
         setStatus({ type: 'success', msg: t('bus_schedule_updated') || 'Bus schedule updated!' });
       } else {
-        await axios.post('http://localhost:5000/api/buses', payload);
+        await busApi.create(payload);
         setStatus({ type: 'success', msg: t('new_bus_added') || 'New bus and schedule added!' });
       }
 

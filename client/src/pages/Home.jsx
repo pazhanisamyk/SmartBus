@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { busApi } from '../services/api';
 import { Search, Grid, List as ListIcon, RefreshCw, Star } from 'lucide-react';
 import BusCard from '../components/BusCard';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -37,13 +37,14 @@ const Home = () => {
   const fetchBuses = async () => {
     setLoading(true);
     try {
-      let url = `http://localhost:5000/api/buses`;
+      const params = {};
       if (searchMode === 'route') {
-        url += `?from=${encodeURIComponent(fromSearch)}&to=${encodeURIComponent(toSearch)}`;
+        params.from = fromSearch;
+        params.to = toSearch;
       } else {
-        url += `?search=${encodeURIComponent(searchTerm)}`;
+        params.search = searchTerm;
       }
-      const res = await axios.get(url);
+      const res = await busApi.getAll(params);
       setBuses(res.data);
     } catch (err) {
       console.error(err);

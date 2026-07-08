@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { busApi } from '../services/api';
 import { ArrowLeft, MapPin, Clock, Info, Shield, Share2, Navigation, AlertCircle, MessageSquare, AlertTriangle, CheckCircle, X, Bell, Banknote } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
@@ -111,7 +111,7 @@ const BusDetails = () => {
   useEffect(() => {
     const fetchBus = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/buses/${id}`);
+        const res = await busApi.getById(id);
         setBus(res.data);
       } catch (err) {
         console.error(err);
@@ -137,7 +137,7 @@ const BusDetails = () => {
   const submitReport = async (status) => {
     setReportSubmitting(true);
     try {
-      const res = await axios.patch(`http://localhost:5000/api/buses/${id}`, {
+      const res = await busApi.update(id, {
         crowd_report: status ? { status, time: new Date() } : null
       });
       setBus(res.data);
